@@ -369,5 +369,5 @@ class Seq2Seq_Inference(object):
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
         cc = SmoothingFunction()
-        bleu = corpus_bleu(actual, predicted, smoothing_function=cc.method3)
+        bleu = corpus_bleu(actual, predicted, smoothing_function=cc.method4, emulate_multibleu=True)
         return bleu
