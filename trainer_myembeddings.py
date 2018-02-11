@@ -106,7 +106,7 @@ model_checkpoint = ModelCheckpoint('data/kp20k/{:}.epoch{{epoch:02d}}-val{{val_l
                                    save_best_only=True)
 
 batch_size = 1200
-epochs = 7
+epochs = 100
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,
