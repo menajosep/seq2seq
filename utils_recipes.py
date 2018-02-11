@@ -6,7 +6,7 @@ import logging
 import numpy as np
 import dill as dpickle
 from tqdm import tqdm, tqdm_notebook
-from nltk.translate.bleu_score import corpus_bleu
+from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 
 
 def load_text_processor(fname='title_pp.dpkl'):
@@ -368,5 +368,6 @@ class Seq2Seq_Inference(object):
             predicted.append(current_predicted)
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
-        bleu = corpus_bleu(actual, predicted)
+        cc = SmoothingFunction()
+        bleu = corpus_bleu(actual, predicted, smoothing_function=cc.method3)
         return bleu
