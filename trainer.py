@@ -5,11 +5,11 @@ from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 import numpy as np
 
-encoder_input_data, doc_length = load_encoder_inputs('data/results/train_body_vecs.npy')
-decoder_input_data, decoder_target_data = load_decoder_inputs('data/results/train_title_vecs.npy')
+encoder_input_data, doc_length = load_encoder_inputs('data/kp20k/train_body_vecs.npy')
+decoder_input_data, decoder_target_data = load_decoder_inputs('data/kp20k/train_title_vecs.npy')
 
-num_encoder_tokens, body_pp = load_text_processor('data/results/body_pp.dpkl')
-num_decoder_tokens, title_pp = load_text_processor('data/results/title_pp.dpkl')
+num_encoder_tokens, body_pp = load_text_processor('data/kp20k/body_pp.dpkl')
+num_decoder_tokens, title_pp = load_text_processor('data/kp20k/title_pp.dpkl')
 
 #arbitrarly set latent dimension for embedding and hidden units
 latent_dim = 300
@@ -65,15 +65,15 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/results/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/kp20k/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 1200
-epochs = 7
+epochs = 100
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/results/seq2seq_model_tutorial.hdf5')
+seq2seq_Model.save('data/kp20k/seq2seq_model_tutorial.hdf5')

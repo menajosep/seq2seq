@@ -4,19 +4,20 @@ from keras.layers import Input, LSTM, GRU, Dense, Embedding, Bidirectional, Batc
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 import numpy as np
+from preprocess import processor
 
-encoder_input_data, doc_length = load_encoder_inputs('data/results/train_body_vecs.npy')
-decoder_input_data, decoder_target_data = load_decoder_inputs('data/results/train_title_vecs.npy')
+encoder_input_data, doc_length = load_encoder_inputs('data/kp20k/train_body_vecs.npy')
+decoder_input_data, decoder_target_data = load_decoder_inputs('data/kp20k/train_title_vecs.npy')
 
-num_encoder_tokens, body_pp = load_text_processor('data/results/body_pp.dpkl')
-num_decoder_tokens, title_pp = load_text_processor('data/results/title_pp.dpkl')
+num_encoder_tokens, body_pp = load_text_processor('data/kp20k/body_pp.dpkl')
+num_decoder_tokens, title_pp = load_text_processor('data/kp20k/title_pp.dpkl')
 
 #arbitrarly set latent dimension for embedding and hidden units
 latent_dim = 300
 
 # load glove embeddings
 embeddings_index = {}
-f = open('data/embeddings.txt')
+f = open('data/kp20k/embeddings.txt')
 for line in f:
     values = line.split()
     word = values[0]
@@ -28,7 +29,7 @@ f.close()
 encoder_embedding_matrix = np.zeros((num_encoder_tokens, latent_dim))
 not_found = 0
 print('Found %s word vectors.' % len(embeddings_index))
-for i, word in body_pp.vocabulary.items():
+for i, word in body_pp.id2token.items():
     embedding_vector = embeddings_index.get(word)
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
@@ -66,7 +67,7 @@ seq2seq_encoder_out = encoder_model(encoder_inputs)
 # build encoder embedding matrix
 decoder_embedding_matrix = np.zeros((num_decoder_tokens, latent_dim))
 print('Found %s word vectors.' % len(embeddings_index))
-for i, word in title_pp.vocabulary.items():
+for i, word in title_pp.id2token.items():
     embedding_vector = embeddings_index.get(word)
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
@@ -102,7 +103,7 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/results/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/kp20k/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 1200
@@ -113,4 +114,4 @@ history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/results/seq2seq_model_tutorial.hdf5')
+seq2seq_Model.save('data/kp20k/seq2seq_model_tutorial.hdf5')
