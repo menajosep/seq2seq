@@ -4,7 +4,6 @@ from keras.layers import Input, LSTM, GRU, Dense, Embedding, Bidirectional, Batc
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 import numpy as np
-from preprocess import processor
 
 encoder_input_data, doc_length = load_encoder_inputs('data/kp20k/train_body_vecs.npy')
 decoder_input_data, decoder_target_data = load_decoder_inputs('data/kp20k/train_title_vecs.npy')
@@ -103,7 +102,7 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/kp20k/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/kp20k/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_myemb.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 1200
@@ -114,4 +113,4 @@ history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/kp20k/seq2seq_model_tutorial.hdf5')
+seq2seq_Model.save('data/kp20k/seq2seq_model_tutorial_myemb.hdf5')
