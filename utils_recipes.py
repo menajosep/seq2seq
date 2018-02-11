@@ -360,9 +360,12 @@ class Seq2Seq_Inference(object):
         # step over the whole set TODO: parallelize this
         for i in tqdm_notebook(range(num_examples)):
             _, yhat = self.generate_issue_title(holdout_bodies[i])
-
-            actual.append(self.pp_title.process_text([holdout_titles[i]])[0])
-            predicted.append(self.pp_title.process_text([yhat])[0])
+            current_actual = self.pp_title.process_text([holdout_titles[i]])[0]
+            print(current_actual)
+            actual.append(current_actual)
+            current_predicted = self.pp_title.process_text([yhat])[0]
+            print(current_predicted)
+            predicted.append(current_predicted)
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
         bleu = corpus_bleu(actual, predicted)
