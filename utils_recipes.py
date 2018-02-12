@@ -6,7 +6,7 @@ import logging
 import numpy as np
 import dill as dpickle
 from tqdm import tqdm, tqdm_notebook
-from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
+from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction, sentence_bleu
 
 
 def load_text_processor(fname='title_pp.dpkl'):
@@ -352,7 +352,7 @@ class Seq2Seq_Inference(object):
             The BLEU Score
 
         """
-        actual, predicted = list(), list()
+        scores = list()
         assert len(holdout_bodies) == len(holdout_titles)
         num_examples = len(holdout_bodies)
 
@@ -362,12 +362,13 @@ class Seq2Seq_Inference(object):
             _, yhat = self.generate_issue_title(holdout_bodies[i])
             current_actual = self.pp_title.process_text([holdout_titles[i]])[0]
             print(current_actual)
-            actual.append(current_actual)
             current_predicted = self.pp_title.process_text([yhat])[0]
             print(current_predicted)
-            predicted.append(current_predicted)
+            score = sentence_bleu(current_actual, current_predicted)
+            scores.append(score)
+            print(score)
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
-        cc = SmoothingFunction()
-        bleu = corpus_bleu(actual, predicted, smoothing_function=cc.method4, emulate_multibleu=True)
+        scores_array = np.array(scores, dtype=float)
+        bleu = np.average(scores_array)
         return bleu
