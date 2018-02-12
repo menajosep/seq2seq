@@ -364,7 +364,7 @@ class Seq2Seq_Inference(object):
             print(current_actual)
             current_predicted = self.pp_title.process_text([yhat])[0]
             print(current_predicted)
-            score = sentence_bleu(current_actual, current_predicted, weights=(1, 0, 0, 0))
+            score = sentence_bleu([current_actual], current_predicted, weights=(1, 0, 0, 0))
             scores.append(score)
             print(score)
         # calculate BLEU score
