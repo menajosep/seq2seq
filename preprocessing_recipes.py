@@ -1,6 +1,6 @@
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from ktext.preprocess import processor
+from preprocess import processor
 import dill as dpickle
 import numpy as np
 import logging
