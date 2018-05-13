@@ -19,6 +19,10 @@ Pretrained embeddings
 ```
 nohup python3.6 trainer_myembeddings.py > /tmp/train_sigma_my_seq2seq.log 2>&1 &
 ```
+Glove mebeddings
+```
+nohup python3.6 trainer_glove.py > /tmp/train_sigma_my_seq2seq.log 2>&1 &
+```
 
 ## validation
 

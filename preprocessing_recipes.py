@@ -13,7 +13,7 @@ logger.setLevel(logging.ERROR)
 
 latent_dim = 300
 
-filename = '/Users/jose.mena/dev/personal/tensorflow/data/recipe-box/data/rad_data.p'
+filename = '/home/jmena/dev/data/recipe-box/rad_data.p'
 f = open(filename, 'rb')
 sentences = pickle.load(f, encoding='latin1')
 start = time.time()
@@ -58,12 +58,12 @@ print('\noriginal string:\n', train_title_raw[0])
 print('after pre-processing:\n', train_title_vecs[0])
 
 # Save the preprocessor
-with open('data/results/body_pp.dpkl', 'wb') as f:
+with open('data/recipes/body_pp.dpkl', 'wb') as f:
     dpickle.dump(body_pp, f)
 
-with open('data/results/title_pp.dpkl', 'wb') as f:
+with open('data/recipes/title_pp.dpkl', 'wb') as f:
     dpickle.dump(title_pp, f)
 
 # Save the processed data
-np.save('data/results/train_title_vecs.npy', train_title_vecs)
-np.save('data/results/train_body_vecs.npy', train_body_vecs)
+np.save('data/recipes/train_title_vecs.npy', train_title_vecs)
+np.save('data/recipes/train_body_vecs.npy', train_body_vecs)

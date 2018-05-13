@@ -4,6 +4,7 @@ from keras.layers import Input, LSTM, GRU, Dense, Embedding, Bidirectional, Batc
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 import numpy as np
+from gensim.models import KeyedVectors
 
 encoder_input_data, doc_length = load_encoder_inputs('data/recipes/train_body_vecs.npy')
 decoder_input_data, decoder_target_data = load_decoder_inputs('data/recipes/train_title_vecs.npy')
@@ -15,21 +16,16 @@ num_decoder_tokens, title_pp = load_text_processor('data/recipes/title_pp.dpkl')
 latent_dim = 300
 
 # load glove embeddings
-embeddings_index = {}
-f = open('/home/jmena/dev/data/glove/glove.6B.300d.txt')
-for line in f:
-    values = line.split()
-    word = values[0]
-    coefs = np.asarray(values[1:], dtype='float32')
-    embeddings_index[word] = coefs
-f.close()
+emb_file = '/home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.bin'
+embeddings = KeyedVectors.load_word2vec_format(emb_file, binary=True)
 
 # build encoder embedding matrix
 encoder_embedding_matrix = np.zeros((num_encoder_tokens, latent_dim))
 not_found = 0
-print('Found %s word vectors.' % len(embeddings_index))
+print('Found %s word vectors.' % len(len(embeddings.vectors)))
 for i, word in body_pp.id2token.items():
-    embedding_vector = embeddings_index.get(word)
+    embedding_index = embeddings.vocab[word].index
+    embedding_vector = embeddings.vectors[embedding_index]
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         encoder_embedding_matrix[i] = embedding_vector
@@ -102,7 +98,7 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/recipes/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_glove.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/recipes/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_word2vec.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 1200
@@ -113,4 +109,4 @@ history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/recipes/seq2seq_model_tutorial_glove.hdf5')
+seq2seq_Model.save('data/recipes/seq2seq_model_tutorial_word2vec.hdf5')
