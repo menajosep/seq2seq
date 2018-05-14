@@ -22,7 +22,7 @@ embeddings = KeyedVectors.load_word2vec_format(emb_file, binary=True)
 # build encoder embedding matrix
 encoder_embedding_matrix = np.zeros((num_encoder_tokens, latent_dim))
 not_found = 0
-print('Found %s word vectors.' % len(len(embeddings.vectors)))
+print('Found %s word vectors.' % str(len(embeddings.vectors)))
 for i, word in body_pp.id2token.items():
     embedding_index = embeddings.vocab[word].index
     embedding_vector = embeddings.vectors[embedding_index]
@@ -101,8 +101,8 @@ script_name_base = 'tutorial_seq2seq'
 model_checkpoint = ModelCheckpoint('data/recipes/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_word2vec.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
-batch_size = 1200
-epochs = 100
+batch_size = 512
+epochs = 20
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,
