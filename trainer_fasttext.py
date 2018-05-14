@@ -16,12 +16,16 @@ latent_dim = 300
 
 # load glove embeddings
 embeddings_index = {}
-f = open('/home/jmena/dev/data/fasttext/wiki.en.vec')
+#f = open('/home/jmena/dev/data/fasttext/wiki.en.vec')
+f = open('/Users/jose.mena/dev/personal/data/fasttext/wiki.en/wiki.en.vec')
 for line in f:
     values = line.split()
     word = values[0]
-    coefs = np.asarray(values[1:], dtype='float32')
-    embeddings_index[word] = coefs
+    try:
+        coefs = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+    except ValueError as ve:
+        print(values)
 f.close()
 
 # build encoder embedding matrix
