@@ -34,8 +34,8 @@ train_title_raw = traindf.title.tolist()
 #preview output of first element
 print(train_body_raw[0])
 
-body_pp = processor(keep_n=8000, padding_maxlen=70)
-train_body_vecs = body_pp.fit_transform(train_body_raw[:1000])
+body_pp = processor(keep_n=20000, padding_maxlen=200)
+train_body_vecs = body_pp.fit_transform(train_body_raw)
 
 
 
