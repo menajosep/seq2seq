@@ -16,8 +16,7 @@ latent_dim = 300
 
 # load glove embeddings
 embeddings_index = {}
-#f = open('/home/jmena/dev/data/fasttext/wiki.en.vec')
-f = open('/Users/jose.mena/dev/personal/data/fasttext/wiki.en/wiki.en.vec')
+f = open('/home/jmena/dev/data/fasttext/wiki.en.vec')
 for line in f:
     values = line.split()
     word = values[0]
