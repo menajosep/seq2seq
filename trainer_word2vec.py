@@ -64,9 +64,13 @@ seq2seq_encoder_out = encoder_model(encoder_inputs)
 
 # build encoder embedding matrix
 decoder_embedding_matrix = np.zeros((num_decoder_tokens, latent_dim))
-print('Found %s word vectors.' % len(embeddings_index))
+print('Found %s word vectors.' % str(len(embeddings.vectors)))
 for i, word in title_pp.id2token.items():
-    embedding_vector = embeddings_index.get(word)
+    if word in embeddings.vocab:
+        embedding_index = embeddings.vocab[word].index
+    else:
+        embedding_index = 0
+    embedding_vector = embeddings.vectors[embedding_index]
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         decoder_embedding_matrix[i] = embedding_vector
