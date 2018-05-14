@@ -16,7 +16,7 @@ num_decoder_tokens, title_pp = load_text_processor('data/recipes/title_pp.dpkl')
 latent_dim = 300
 
 # load glove embeddings
-emb_file = '/Users/jose.mena/dev/personal/data/word2vec/GoogleNews-vectors-negative300.bin'
+emb_file = '/home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.bin'
 embeddings = KeyedVectors.load_word2vec_format(emb_file, binary=True)
 
 # build encoder embedding matrix
