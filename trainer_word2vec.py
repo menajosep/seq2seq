@@ -16,7 +16,7 @@ num_decoder_tokens, title_pp = load_text_processor('data/recipes/title_pp.dpkl')
 latent_dim = 300
 
 # load glove embeddings
-emb_file = '/home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.bin'
+emb_file = '/Users/jose.mena/dev/personal/data/word2vec/GoogleNews-vectors-negative300.bin'
 embeddings = KeyedVectors.load_word2vec_format(emb_file, binary=True)
 
 # build encoder embedding matrix
@@ -24,7 +24,10 @@ encoder_embedding_matrix = np.zeros((num_encoder_tokens, latent_dim))
 not_found = 0
 print('Found %s word vectors.' % str(len(embeddings.vectors)))
 for i, word in body_pp.id2token.items():
-    embedding_index = embeddings.vocab[word].index
+    if word in embeddings.vocab:
+        embedding_index = embeddings.vocab[word].index
+    else:
+        embedding_index = 0
     embedding_vector = embeddings.vectors[embedding_index]
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
