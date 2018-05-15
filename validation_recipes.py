@@ -22,7 +22,7 @@ seq2seq_inf_glove = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 
 
 bleu = seq2seq_inf_glove.evaluate_model(body_text[:10000], title_text[:10000])
-print(f"\n****** BLEU scrore ******:\n {bleu}")
+print(f"\n****** Glove BLEU scrore ******:\n {bleu}")
 
 seq2seq_inf_fasttext = Seq2Seq_Inference(encoder_preprocessor=body_pp,
                                  decoder_preprocessor=title_pp,
@@ -32,7 +32,7 @@ seq2seq_inf_fasttext = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 
 
 bleu = seq2seq_inf_fasttext.evaluate_model(body_text[:10000], title_text[:10000])
-print(f"\n****** BLEU scrore ******:\n {bleu}")
+print(f"\n****** Fasttext BLEU scrore ******:\n {bleu}")
 
 seq2seq_inf_word2vec = Seq2Seq_Inference(encoder_preprocessor=body_pp,
                                  decoder_preprocessor=title_pp,
@@ -42,4 +42,4 @@ seq2seq_inf_word2vec = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 
 
 bleu = seq2seq_inf_word2vec.evaluate_model(body_text[:10000], title_text[:10000])
-print(f"\n****** BLEU scrore ******:\n {bleu}")
+print(f"\n****** Word2vec BLEU scrore ******:\n {bleu}")
