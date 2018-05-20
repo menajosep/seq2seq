@@ -361,12 +361,12 @@ class Seq2Seq_Inference(object):
         for i in tqdm_notebook(range(num_examples)):
             _, yhat = self.generate_issue_title(holdout_bodies[i])
             current_actual = self.pp_title.process_text([holdout_titles[i]])[0]
-            print(current_actual)
+            #print(current_actual)
             current_predicted = self.pp_title.process_text([yhat])[0]
-            print(current_predicted)
+            #print(current_predicted)
             score = sentence_bleu([current_actual], current_predicted, weights=(1, 0, 0, 0))
             scores.append(score)
-            print(score)
+            #print(score)
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
         scores_array = np.array(scores, dtype=float)
