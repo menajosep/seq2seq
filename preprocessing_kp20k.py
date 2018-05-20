@@ -14,25 +14,25 @@ logger.setLevel(logging.ERROR)
 latent_dim = 300
 
 #filename = '/Users/jose.mena/dev/personal/data/kp20k/ke20k_training.json'
-filename = '/home/bigplay/uniko/tensorflow/data/kp20k/ke20k_training.json'
-bad_words = pickle.load(open('data/kp20k/bad_words_list.p', "rb"))
-start = time.time()
-titles = []
-bodies = []
+#filename = '/home/bigplay/uniko/tensorflow/data/kp20k/ke20k_training.json'
+#bad_words = pickle.load(open('data/kp20k/bad_words_list.p', "rb"))
+#start = time.time()
+#titles = []
+#bodies = []
 
-sentences = []
-with open(filename) as f:
-    for line in f:
-        json_line = pd.json.loads(line)
-        bodies.append(json_line['abstract'])
-        titles.append(json_line['title'])
-        if len(bodies) == 70000:
-            break
-recipes_data = {"body": bodies, "title": titles}
-recipes_df = pd.DataFrame(recipes_data)
-recipes_df.to_csv('data/kp20k/kp20k.csv')
-end = time.time()
-print("Storing recipes to csv: %.2fs" % (end - start))
+#sentences = []
+#with open(filename) as f:
+#    for line in f:
+#        json_line = pd.json.loads(line)
+#        bodies.append(json_line['abstract'])
+#        titles.append(json_line['title'])
+#        if len(bodies) == 70000:
+#            break
+#recipes_data = {"body": bodies, "title": titles}
+#recipes_df = pd.DataFrame(recipes_data)
+#recipes_df.to_csv('data/kp20k/kp20k.csv')
+#end = time.time()
+#print("Storing recipes to csv: %.2fs" % (end - start))
 
 #read in data sample 2M rows (for speed of tutorial)
 traindf, testdf = train_test_split(pd.read_csv('data/kp20k/kp20k.csv'),
