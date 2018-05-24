@@ -36,7 +36,7 @@ latent_dim = 300
 
 #read in data sample 2M rows (for speed of tutorial)
 traindf, testdf = train_test_split(pd.read_csv('data/kp20k/kp20k.csv'),
-                                   test_size=.90)
+                                   test_size=.80)
 
 train_body_raw = traindf.body.tolist()
 train_title_raw = traindf.title.tolist()

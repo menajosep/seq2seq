@@ -43,18 +43,24 @@ def textacy_cleaner(text: str) -> str:
 
     This function operates over a list.
     """
-    return preprocess_text(text,
-                           fix_unicode=True,
-                           lowercase=True,
-                           transliterate=True,
-                           no_urls=True,
-                           no_emails=True,
-                           no_phone_numbers=True,
-                           no_numbers=True,
-                           no_currency_symbols=True,
-                           no_punct=True,
-                           no_contractions=False,
-                           no_accents=True)
+    try:
+        processed_text = preprocess_text(text,
+                               fix_unicode=True,
+                               lowercase=True,
+                               transliterate=True,
+                               no_urls=True,
+                               no_emails=True,
+                               no_phone_numbers=True,
+                               no_numbers=True,
+                               no_currency_symbols=True,
+                               no_punct=True,
+                               no_contractions=False,
+                               no_accents=True)
+    except:
+        logging.error("wrong text")
+        processed_text = ""
+
+    return processed_text
 
 
 def apply_parallel(func: Callable,
@@ -66,7 +72,7 @@ def apply_parallel(func: Callable,
     Automatically determines the chunk size.
     """
     if not cpu_cores:
-        cpu_cores = cpu_count() - 1
+        cpu_cores = cpu_count()
 
     try:
         chunk_size = ceil(len(data) / cpu_cores)
