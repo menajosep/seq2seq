@@ -66,7 +66,7 @@ def apply_parallel(func: Callable,
     Automatically determines the chunk size.
     """
     if not cpu_cores:
-        cpu_cores = cpu_count()
+        cpu_cores = cpu_count() - 1
 
     try:
         chunk_size = ceil(len(data) / cpu_cores)
