@@ -6,29 +6,28 @@ from keras.callbacks import ModelCheckpoint
 import numpy as np
 from gensim.models import KeyedVectors
 
-encoder_input_data, doc_length = load_encoder_inputs('data/recipes/train_body_vecs.npy')
-decoder_input_data, decoder_target_data = load_decoder_inputs('data/recipes/train_title_vecs.npy')
+encoder_input_data, doc_length = load_encoder_inputs('data/economics/train_body_vecs.npy')
+decoder_input_data, decoder_target_data = load_decoder_inputs('data/economics/train_title_vecs.npy')
 
-num_encoder_tokens, body_pp = load_text_processor('data/recipes/body_pp.dpkl')
-num_decoder_tokens, title_pp = load_text_processor('data/recipes/title_pp.dpkl')
+num_encoder_tokens, body_pp = load_text_processor('data/economics/body_pp.dpkl')
+num_decoder_tokens, title_pp = load_text_processor('data/economics/title_pp.dpkl')
 
 #arbitrarly set latent dimension for embedding and hidden units
 latent_dim = 300
 
 # load glove embeddings
-emb_file = '/home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.bin'
+emb_file = '/Users/jose.mena/dev/personal/data/word2vec/GoogleNews-vectors-negative300.bin'
 embeddings = KeyedVectors.load_word2vec_format(emb_file, binary=True)
 
 # build encoder embedding matrix
 encoder_embedding_matrix = np.zeros((num_encoder_tokens, latent_dim))
 not_found = 0
-print('Found %s word vectors.' % str(len(embeddings.vectors)))
+print('Found %s word vectors.' % str(len(embeddings.vocab)))
 for i, word in body_pp.id2token.items():
     if word in embeddings.vocab:
-        embedding_index = embeddings.vocab[word].index
+        embedding_vector = embeddings.wv[word]
     else:
-        embedding_index = 0
-    embedding_vector = embeddings.vectors[embedding_index]
+        embedding_vector = embeddings.wv['UNK']
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         encoder_embedding_matrix[i] = embedding_vector
@@ -64,13 +63,12 @@ seq2seq_encoder_out = encoder_model(encoder_inputs)
 
 # build encoder embedding matrix
 decoder_embedding_matrix = np.zeros((num_decoder_tokens, latent_dim))
-print('Found %s word vectors.' % str(len(embeddings.vectors)))
+print('Found %s word vectors.' % str(len(embeddings.vocab)))
 for i, word in title_pp.id2token.items():
     if word in embeddings.vocab:
-        embedding_index = embeddings.vocab[word].index
+        embedding_vector = embeddings.wv[word]
     else:
-        embedding_index = 0
-    embedding_vector = embeddings.vectors[embedding_index]
+        embedding_vector = embeddings.wv['UNK']
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         decoder_embedding_matrix[i] = embedding_vector
@@ -105,15 +103,15 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/recipes/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_word2vec.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/economics/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_word2vec.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 512
-epochs = 20
+epochs = 40
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/recipes/seq2seq_model_tutorial_word2vec.hdf5')
+seq2seq_Model.save('data/economics/seq2seq_model_tutorial_word2vec.hdf5')

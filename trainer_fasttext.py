@@ -5,18 +5,18 @@ from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 import numpy as np
 
-encoder_input_data, doc_length = load_encoder_inputs('data/recipes/train_body_vecs.npy')
-decoder_input_data, decoder_target_data = load_decoder_inputs('data/recipes/train_title_vecs.npy')
+encoder_input_data, doc_length = load_encoder_inputs('data/economics/train_body_vecs.npy')
+decoder_input_data, decoder_target_data = load_decoder_inputs('data/economics/train_title_vecs.npy')
 
-num_encoder_tokens, body_pp = load_text_processor('data/recipes/body_pp.dpkl')
-num_decoder_tokens, title_pp = load_text_processor('data/recipes/title_pp.dpkl')
+num_encoder_tokens, body_pp = load_text_processor('data/economics/body_pp.dpkl')
+num_decoder_tokens, title_pp = load_text_processor('data/economics/title_pp.dpkl')
 
 #arbitrarly set latent dimension for embedding and hidden units
 latent_dim = 300
 
 # load glove embeddings
 embeddings_index = {}
-f = open('/home/jmena/dev/data/fasttext/wiki.en.vec')
+f = open('/Users/jose.mena/dev/personal/data/fasttext/wiki.es/wiki.es.vec')
 for line in f:
     values = line.split()
     word = values[0]
@@ -105,15 +105,15 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 script_name_base = 'tutorial_seq2seq'
 
-model_checkpoint = ModelCheckpoint('data/recipes/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_fasttext.hdf5'.format(script_name_base),
+model_checkpoint = ModelCheckpoint('data/economics/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_fasttext.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
-batch_size = 512
-epochs = 20
+batch_size = 1024
+epochs = 100
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,
           validation_split=0.12, callbacks=[model_checkpoint])
 
 #save model
-seq2seq_Model.save('data/recipes/seq2seq_model_tutorial_fasttext.hdf5')
+seq2seq_Model.save('data/economics/seq2seq_model_tutorial_fasttext.hdf5')
