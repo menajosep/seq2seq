@@ -294,7 +294,7 @@ class Seq2Seq_Inference(object):
                 cols = ['issue_url', 'issue_title', 'body']
                 dfcopy = self.rec_df.iloc[neighbors][cols].copy(deep=True)
                 dfcopy['dist'] = dist
-                similar_issues_df = dfcopy.query(f'dist <= {threshold}')
+                similar_issues_df = dfcopy.query('dist <= ' % threshold)
 
                 print("\n**** Similar Issues (using encoder embedding) ****:\n")
                 #display(similar_issues_df)
