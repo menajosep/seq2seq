@@ -253,8 +253,8 @@ class processor(processor_base):
         self.document_length_stats = histdf
         self.doc_length_huerestic = histdf.query('cumsum_pct >= %s' % hueristic).bin.head(1).values[0]
         logging.warning(' '.join(["Setting maximum document length to",
-                                  f'{self.doc_length_huerestic} based upon',
-                                  f'hueristic of {hueristic} percentile.\n',
+                                  '%s based upon' % str(self.doc_length_huerestic),
+                                  'hueristic of %s percentile.\n' % str({hueristic}),
                                   'See full histogram by insepecting the',
                                   "`document_length_stats` attribute."]))
         self.padding_maxlen = self.doc_length_huerestic
