@@ -106,8 +106,8 @@ script_name_base = 'tutorial_seq2seq'
 model_checkpoint = ModelCheckpoint('data/economics/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_word2vec.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
-batch_size = 512
-epochs = 40
+batch_size = 1024
+epochs = 100
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,

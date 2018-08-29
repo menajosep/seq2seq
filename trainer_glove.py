@@ -20,8 +20,11 @@ f = open('/Users/jose.mena/dev/personal/data/glove/glove.6B.300d.txt')
 for line in f:
     values = line.split()
     word = values[0]
-    coefs = np.asarray(values[1:], dtype='float32')
-    embeddings_index[word] = coefs
+    try:
+        coefs = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+    except ValueError as ve:
+        print(values)
 f.close()
 
 # build encoder embedding matrix
@@ -105,8 +108,8 @@ script_name_base = 'tutorial_seq2seq'
 model_checkpoint = ModelCheckpoint('data/economics/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_glove.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
-batch_size = 512
-epochs = 40
+batch_size = 1024
+epochs = 100
 history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
           batch_size=batch_size,
           epochs=epochs,

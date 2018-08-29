@@ -1,6 +1,6 @@
 from keras.models import load_model
 from sklearn.model_selection import train_test_split
-from utils_recipes import load_text_processor
+from utils import load_text_processor
 from utils_recipes import Seq2Seq_Inference
 import pandas as pd
 

@@ -37,7 +37,7 @@ def load_text_processor(fname='title_pp.dpkl'):
         pp = dpickle.load(f)
 
     num_tokens = max(pp.id2token.keys()) + 1
-    print(f'Size of vocabulary for {fname}: {num_tokens:,}')
+    print('Size of vocabulary for %s: %d' % (fname, num_tokens))
     return num_tokens, pp
 
 
@@ -68,8 +68,8 @@ def load_decoder_inputs(decoder_np_vecs='train_title_vecs.npy'):
     # Decoder Target Data Is Ahead By 1 Time Step From Decoder Input Data (Teacher Forcing)
     decoder_target_data = vectorized_title[:, 1:]
 
-    print(f'Shape of decoder input: {decoder_input_data.shape}')
-    print(f'Shape of decoder target: {decoder_target_data.shape}')
+    print('Shape of decoder input: %s' % str(decoder_input_data.shape))
+    print('Shape of decoder target: %s' % str(decoder_target_data.shape))
     return decoder_input_data, decoder_target_data
 
 
@@ -95,7 +95,7 @@ def load_encoder_inputs(encoder_np_vecs='train_body_vecs.npy'):
     # Encoder input is simply the body of the issue text
     encoder_input_data = vectorized_body
     doc_length = encoder_input_data.shape[1]
-    print(f'Shape of encoder input: {encoder_input_data.shape}')
+    print('Shape of encoder input: %s' % str(encoder_input_data.shape))
     return encoder_input_data, doc_length
 
 
@@ -270,18 +270,18 @@ class Seq2Seq_Inference(object):
         """
         if i:
             print('\n\n==============================================')
-            print(f'============== Example # {i} =================\n')
+            print('============== Example # %s =================\n' % str(i))
 
         if url:
             print(url)
 
-        print(f"Issue Body:\n {body_text} \n")
+        print("Issue Body:\n %s \n" % body_text)
 
         if title_text:
-            print(f"Original Title:\n {title_text}")
+            print("Original Title:\n %s" % title_text)
 
         emb, gen_title = self.generate_issue_title(body_text)
-        print(f"\n****** Machine Generated Title (Prediction) ******:\n {gen_title}")
+        print("\n****** Machine Generated Title (Prediction) ******:\n %s" % gen_title)
 
         if self.nn:
             # return neighbors and distances

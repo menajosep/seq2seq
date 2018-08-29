@@ -1,197 +1,8 @@
-import tensorflow as tf
-from keras import backend as K
-from keras.layers import Input
-from keras.models import Model
 import logging
 import numpy as np
-import dill as dpickle
 from tqdm import tqdm, tqdm_notebook
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction, sentence_bleu
-
-
-def load_text_processor(fname='title_pp.dpkl'):
-    """
-    Load preprocessors from disk.
-
-    Parameters
-    ----------
-    fname: str
-        file name of ktext.proccessor object
-
-    Returns
-    -------
-    num_tokens : int
-        size of vocabulary loaded into ktext.processor
-    pp : ktext.processor
-        the processor you are trying to load
-
-    Typical Usage:
-    -------------
-
-    num_decoder_tokens, title_pp = load_text_processor(fname='title_pp.dpkl')
-    num_encoder_tokens, body_pp = load_text_processor(fname='body_pp.dpkl')
-
-    """
-    # Load files from disk
-    with open(fname, 'rb') as f:
-        pp = dpickle.load(f)
-
-    num_tokens = max(pp.id2token.keys()) + 1
-    print(f'Size of vocabulary for {fname}: {num_tokens:,}')
-    return num_tokens, pp
-
-
-def load_decoder_inputs(decoder_np_vecs='train_title_vecs.npy'):
-    """
-    Load decoder inputs.
-
-    Parameters
-    ----------
-    decoder_np_vecs : str
-        filename of serialized numpy.array of decoder input (issue title)
-
-    Returns
-    -------
-    decoder_input_data : numpy.array
-        The data fed to the decoder as input during training for teacher forcing.
-        This is the same as `decoder_np_vecs` except the last position.
-    decoder_target_data : numpy.array
-        The data that the decoder data is trained to generate (issue title).
-        Calculated by sliding `decoder_np_vecs` one position forward.
-
-    """
-    vectorized_title = np.load(decoder_np_vecs)
-    # For Decoder Input, you don't need the last word as that is only for prediction
-    # when we are training using Teacher Forcing.
-    decoder_input_data = vectorized_title[:, :-1]
-
-    # Decoder Target Data Is Ahead By 1 Time Step From Decoder Input Data (Teacher Forcing)
-    decoder_target_data = vectorized_title[:, 1:]
-
-    print(f'Shape of decoder input: {decoder_input_data.shape}')
-    print(f'Shape of decoder target: {decoder_target_data.shape}')
-    return decoder_input_data, decoder_target_data
-
-
-def load_encoder_inputs(encoder_np_vecs='train_body_vecs.npy'):
-    """
-    Load variables & data that are inputs to encoder.
-
-    Parameters
-    ----------
-    encoder_np_vecs : str
-        filename of serialized numpy.array of encoder input (issue title)
-
-    Returns
-    -------
-    encoder_input_data : numpy.array
-        The issue body
-    doc_length : int
-        The standard document length of the input for the encoder after padding
-        the shape of this array will be (num_examples, doc_length)
-
-    """
-    vectorized_body = np.load(encoder_np_vecs)
-    # Encoder input is simply the body of the issue text
-    encoder_input_data = vectorized_body
-    doc_length = encoder_input_data.shape[1]
-    print(f'Shape of encoder input: {encoder_input_data.shape}')
-    return encoder_input_data, doc_length
-
-
-def free_gpu_mem():
-    """Attempt to free gpu memory."""
-    K.get_session().close()
-    cfg = K.tf.ConfigProto()
-    cfg.gpu_options.allow_growth = True
-    K.set_session(K.tf.Session(config=cfg))
-
-
-def test_gpu():
-    """Run a toy computation task in tensorflow to test GPU."""
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    session = tf.Session(config=config)
-    hello = tf.constant('Hello, TensorFlow!')
-    print(session.run(hello))
-
-
-def extract_encoder_model(model):
-    """
-    Extract the encoder from the original Sequence to Sequence Model.
-
-    Returns a keras model object that has one input (body of issue) and one
-    output (encoding of issue, which is the last hidden state).
-
-    Input:
-    -----
-    model: keras model object
-
-    Returns:
-    -----
-    keras model object
-
-    """
-    encoder_model = model.get_layer('Encoder-Model')
-    return encoder_model
-
-
-def extract_decoder_model(model):
-    """
-    Extract the decoder from the original model.
-
-    Inputs:
-    ------
-    model: keras model object
-
-    Returns:
-    -------
-    A Keras model object with the following inputs and outputs:
-
-    Inputs of Keras Model That Is Returned:
-    1: the embedding index for the last predicted word or the <Start> indicator
-    2: the last hidden state, or in the case of the first word the hidden state from the encoder
-
-    Outputs of Keras Model That Is Returned:
-    1.  Prediction (class probabilities) for the next word
-    2.  The hidden state of the decoder, to be fed back into the decoder at the next time step
-
-    Implementation Notes:
-    ----------------------
-    Must extract relevant layers and reconstruct part of the computation graph
-    to allow for different inputs as we are not going to use teacher forcing at
-    inference time.
-
-    """
-    # the latent dimension is the same throughout the architecture so we are going to
-    # cheat and grab the latent dimension of the embedding because that is the same as what is
-    # output from the decoder
-    latent_dim = model.get_layer('Decoder-Word-Embedding').output_shape[-1]
-
-    # Reconstruct the input into the decoder
-    decoder_inputs = model.get_layer('Decoder-Input').input
-    dec_emb = model.get_layer('Decoder-Word-Embedding')(decoder_inputs)
-    dec_bn = model.get_layer('Decoder-Batchnorm-1')(dec_emb)
-
-    # Instead of setting the intial state from the encoder and forgetting about it, during inference
-    # we are not doing teacher forcing, so we will have to have a feedback loop from predictions back into
-    # the GRU, thus we define this input layer for the state so we can add this capability
-    gru_inference_state_input = Input(shape=(latent_dim,), name='hidden_state_input')
-
-    # we need to reuse the weights that is why we are getting this
-    # If you inspect the decoder GRU that we created for training, it will take as input
-    # 2 tensors -> (1) is the embedding layer output for the teacher forcing
-    #                  (which will now be the last step's prediction, and will be _start_ on the first time step)
-    #              (2) is the state, which we will initialize with the encoder on the first time step, but then
-    #                   grab the state after the first prediction and feed that back in again.
-    gru_out, gru_state_out = model.get_layer('Decoder-GRU')([dec_bn, gru_inference_state_input])
-
-    # Reconstruct dense layers
-    dec_bn2 = model.get_layer('Decoder-Batchnorm-2')(gru_out)
-    dense_out = model.get_layer('Final-Output-Dense')(dec_bn2)
-    decoder_model = Model([decoder_inputs, gru_inference_state_input],
-                          [dense_out, gru_state_out])
-    return decoder_model
+from utils import extract_decoder_model, extract_encoder_model
 
 
 class Seq2Seq_Inference(object):
@@ -270,18 +81,18 @@ class Seq2Seq_Inference(object):
         """
         if i:
             print('\n\n==============================================')
-            print(f'============== Example # {i} =================\n')
+            print('============== Example # %s =================\n' % str(i))
 
         if url:
             print(url)
 
-        print(f"Issue Body:\n {body_text} \n")
+        print("Issue Body:\n %s \n" % body_text)
 
         if title_text:
-            print(f"Original Title:\n {title_text}")
+            print("Original Title:\n %s" % title_text)
 
         emb, gen_title = self.generate_issue_title(body_text)
-        print(f"\n****** Machine Generated Title (Prediction) ******:\n {gen_title}")
+        print("\n****** Machine Generated Title (Prediction) ******:\n %s" % gen_title)
 
         if self.nn:
             # return neighbors and distances
