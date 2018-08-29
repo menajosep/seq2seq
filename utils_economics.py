@@ -169,7 +169,7 @@ class Seq2Seq_Inference(object):
 
         logging.warning('Generating predictions.')
         # step over the whole set TODO: parallelize this
-        for i in tqdm_notebook(range(num_examples)):
+        for i in tqdm(range(num_examples)):
             _, yhat = self.generate_issue_title(holdout_bodies[i])
             current_actual = self.pp_title.process_text([holdout_titles[i]])[0]
             print(current_actual)
