@@ -5,8 +5,7 @@ from utils_recipes import Seq2Seq_Inference
 import pandas as pd
 
 #read in data sample 2M rows (for speed of tutorial)
-traindf, testdf = train_test_split(pd.read_csv('data/kp20k/kp20k.csv'),
-                                   test_size=.10)
+testdf = pd.read_pickle('data/kp20k/test.pd')
 body_text = testdf.body.tolist()
 title_text = testdf.title.tolist()
 seq2seq_Model_glove = load_model('data/kp20k/seq2seq_model_tutorial_glove.hdf5')

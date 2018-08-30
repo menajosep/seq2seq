@@ -67,3 +67,4 @@ with open('data/recipes/title_pp.dpkl', 'wb') as f:
 # Save the processed data
 np.save('data/recipes/train_title_vecs.npy', train_title_vecs)
 np.save('data/recipes/train_body_vecs.npy', train_body_vecs)
+testdf.to_pickle('data/recipes/test.pd')

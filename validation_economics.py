@@ -5,8 +5,8 @@ from utils_economics import Seq2Seq_Inference
 import pandas as pd
 
 #read in data sample 2M rows (for speed of tutorial)
-traindf, testdf = train_test_split(pd.read_csv('data/economics/Full-Economic-News-DFE-839861_unix2.csv'),
-                                   test_size=.10)
+testdf = pd.read_pickle('data/economics/test.pd')
+
 body_text = testdf.text.tolist()
 title_text = testdf.headline.tolist()
 seq2seq_Model_glove = load_model('data/economics/seq2seq_model_tutorial_glove.hdf5')

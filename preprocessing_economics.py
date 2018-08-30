@@ -79,4 +79,5 @@ with open('data/economics/title_pp.dpkl', 'wb') as f:
 # Save the processed data
 np.save('data/economics/train_title_vecs.npy', train_title_vecs)
 np.save('data/economics/train_body_vecs.npy', train_body_vecs)
+testdf.to_pickle('data/economics/test.pd')
 print('Done')

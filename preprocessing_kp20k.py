@@ -79,4 +79,5 @@ with open('data/kp20k/title_pp.dpkl', 'wb') as f:
 # Save the processed data
 np.save('data/kp20k/train_title_vecs.npy', train_title_vecs)
 np.save('data/kp20k/train_body_vecs.npy', train_body_vecs)
+testdf.to_pickle('data/kp20k/test.pd')
 print('Done')
