@@ -7,7 +7,7 @@ import numpy as np
 import argparse
 
 
-def main(emb_file, datasource):
+def main(emb_file, datasource, n_epochs):
 
     encoder_input_data, doc_length = load_encoder_inputs('data/{}/train_body_vecs.npy'.format(datasource))
     decoder_input_data, decoder_target_data = load_decoder_inputs('data/{}/train_title_vecs.npy'.format(datasource))
@@ -115,7 +115,7 @@ def main(emb_file, datasource):
                                        save_best_only=True)
 
     batch_size = 1024
-    epochs = 100
+    epochs = n_epochs
     history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_dims(decoder_target_data, -1),
               batch_size=batch_size,
               epochs=epochs,
@@ -129,5 +129,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--emb_file', type=str, default=None, help='file with embeddings')
     parser.add_argument('--datasource', type=str, default=None, help='type of datasource recipes|kp20k|economics')
+    parser.add_argument('--n_epochs', type=int, default=1, help='number of epochs')
     args = parser.parse_args()
-    main(emb_file=args.emb_file, datasource=args.datasource)
+    main(emb_file=args.emb_file, datasource=args.datasource, n_epochs=args.n_epochs)
