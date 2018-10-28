@@ -7,7 +7,7 @@ import numpy as np
 import argparse
 
 
-def main(emb_file, datasource, n_epochs):
+def main(emb_file, datasource, n_epochs, emb_type, learning_rate):
 
     encoder_input_data, doc_length = load_encoder_inputs('data/{}/train_body_vecs.npy'.format(datasource))
     decoder_input_data, decoder_target_data = load_decoder_inputs('data/{}/train_title_vecs.npy'.format(datasource))
@@ -20,7 +20,7 @@ def main(emb_file, datasource, n_epochs):
     #arbitrarly set latent dimension for embedding and hidden units
     latent_dim = 300
 
-    # load glove embeddings
+    # load embeddings
     embeddings_index = {}
     f = open(emb_file)
     for line in f:
@@ -107,11 +107,13 @@ def main(emb_file, datasource, n_epochs):
     seq2seq_Model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 
-    seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categorical_crossentropy')
+    seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=learning_rate), loss='sparse_categorical_crossentropy')
 
     script_name_base = 'tutorial_seq2seq'
 
-    model_checkpoint = ModelCheckpoint('data/{}/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_glove.hdf5'.format(datasource,script_name_base),
+    model_checkpoint = ModelCheckpoint('data/{}/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}_{}.hdf5'.format(datasource,
+                                                                                                           script_name_base,
+                                                                                                           emb_type),
                                        save_best_only=True)
 
     batch_size = 1024
@@ -122,13 +124,17 @@ def main(emb_file, datasource, n_epochs):
               validation_split=0.12, callbacks=[model_checkpoint])
 
     #save model
-    seq2seq_Model.save('data/{}/seq2seq_model_tutorial_glove.hdf5'.format(datasource))
+    seq2seq_Model.save('data/{}/seq2seq_model_tutorial_{}.hdf5'.format(datasource,emb_type))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--emb_file', type=str, default=None, help='file with embeddings')
+    parser.add_argument('--emb_type', type=str, default=None, help='type of embeddings')
     parser.add_argument('--datasource', type=str, default=None, help='type of datasource recipes|kp20k|economics')
     parser.add_argument('--n_epochs', type=int, default=1, help='number of epochs')
+    parser.add_argument('--learning_rate', type=float, default=0.001, help='learnng rate')
     args = parser.parse_args()
-    main(emb_file=args.emb_file, datasource=args.datasource, n_epochs=args.n_epochs)
+    main(emb_file=args.emb_file, datasource=args.datasource,
+         n_epochs=args.n_epochs, emb_type=args.emb_type,
+         learning_rate=args.learning_rate)
