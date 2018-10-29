@@ -45,15 +45,15 @@ seq2seq_inf_fasttext = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 bleu, rouge1_f, rouge1_p, rouge1_r, rouge2_f, rouge2_p, rouge2_r, rougel_f, rougel_p, rougel_r = \
     seq2seq_inf_fasttext.evaluate_model(body_text[:10000], title_text[:10000])
 print("\n****** Fasttext BLEU scrore ******: %s" % str(bleu))
-print("\n****** Glove ROUGE 1 f scrore ******: %s" % str(rouge1_f))
-print("\n****** Glove ROUGE 1 precission scrore ******: %s" % str(rouge1_p))
-print("\n****** Glove ROUGE 1 recall scrore ******: %s" % str(rouge1_r))
-print("\n****** Glove ROUGE 2 f scrore ******: %s" % str(rouge2_f))
-print("\n****** Glove ROUGE 2 precission scrore ******: %s" % str(rouge2_p))
-print("\n****** Glove ROUGE 2 recall scrore ******: %s" % str(rouge2_r))
-print("\n****** Glove ROUGE l f scrore ******: %s" % str(rougel_f))
-print("\n****** Glove ROUGE l precission scrore ******: %s" % str(rougel_p))
-print("\n****** Glove ROUGE l recall scrore ******: %s" % str(rougel_r))
+print("\n****** Fasttext ROUGE 1 f scrore ******: %s" % str(rouge1_f))
+print("\n****** Fasttext ROUGE 1 precission scrore ******: %s" % str(rouge1_p))
+print("\n****** Fasttext ROUGE 1 recall scrore ******: %s" % str(rouge1_r))
+print("\n****** Fasttext ROUGE 2 f scrore ******: %s" % str(rouge2_f))
+print("\n****** Fasttext ROUGE 2 precission scrore ******: %s" % str(rouge2_p))
+print("\n****** Fasttext ROUGE 2 recall scrore ******: %s" % str(rouge2_r))
+print("\n****** Fasttext ROUGE l f scrore ******: %s" % str(rougel_f))
+print("\n****** Fasttext ROUGE l precission scrore ******: %s" % str(rougel_p))
+print("\n****** Fasttext ROUGE l recall scrore ******: %s" % str(rougel_r))
 
 seq2seq_inf_word2vec = Seq2Seq_Inference(encoder_preprocessor=body_pp,
                                  decoder_preprocessor=title_pp,
@@ -65,15 +65,15 @@ seq2seq_inf_word2vec = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 bleu, rouge1_f, rouge1_p, rouge1_r, rouge2_f, rouge2_p, rouge2_r, rougel_f, rougel_p, rougel_r = \
     seq2seq_inf_word2vec.evaluate_model(body_text[:10000], title_text[:10000])
 print("\n****** Word2vec BLEU scrore ******: %s" % str(bleu))
-print("\n****** Glove ROUGE 1 f scrore ******: %s" % str(rouge1_f))
-print("\n****** Glove ROUGE 1 precission scrore ******: %s" % str(rouge1_p))
-print("\n****** Glove ROUGE 1 recall scrore ******: %s" % str(rouge1_r))
-print("\n****** Glove ROUGE 2 f scrore ******: %s" % str(rouge2_f))
-print("\n****** Glove ROUGE 2 precission scrore ******: %s" % str(rouge2_p))
-print("\n****** Glove ROUGE 2 recall scrore ******: %s" % str(rouge2_r))
-print("\n****** Glove ROUGE l f scrore ******: %s" % str(rougel_f))
-print("\n****** Glove ROUGE l precission scrore ******: %s" % str(rougel_p))
-print("\n****** Glove ROUGE l recall scrore ******: %s" % str(rougel_r))
+print("\n****** Word2vec ROUGE 1 f scrore ******: %s" % str(rouge1_f))
+print("\n****** Word2vec ROUGE 1 precission scrore ******: %s" % str(rouge1_p))
+print("\n****** Word2vec ROUGE 1 recall scrore ******: %s" % str(rouge1_r))
+print("\n****** Word2vec ROUGE 2 f scrore ******: %s" % str(rouge2_f))
+print("\n****** Word2vec ROUGE 2 precission scrore ******: %s" % str(rouge2_p))
+print("\n****** Word2vec ROUGE 2 recall scrore ******: %s" % str(rouge2_r))
+print("\n****** Word2vec ROUGE l f scrore ******: %s" % str(rougel_f))
+print("\n****** Word2vec ROUGE l precission scrore ******: %s" % str(rougel_p))
+print("\n****** Word2vec ROUGE l recall scrore ******: %s" % str(rougel_r))
 
 #seq2seq_inf_custom = Seq2Seq_Inference(encoder_preprocessor=body_pp,
 #                                 decoder_preprocessor=title_pp,
