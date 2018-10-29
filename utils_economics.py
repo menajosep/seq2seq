@@ -184,7 +184,7 @@ class Seq2Seq_Inference(object):
             bleu_score = sentence_bleu([current_actual], current_predicted, weights=(1, 0, 0, 0))
             bleus.append(bleu_score)
             #print(bleu_score)
-            rouge_scores = self.rouge.get_scores(current_predicted, current_actual)
+            rouge_scores = self.rouge.get_scores(' '.join(current_predicted), ' '.join(current_actual))
             rouge1_fs.append(rouge_scores[0]['rouge-1']['f'])
             rouge1_ps.append(rouge_scores[0]['rouge-1']['p'])
             rouge1_rs.append(rouge_scores[0]['rouge-1']['r'])
