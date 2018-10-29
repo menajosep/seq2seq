@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm, tqdm_notebook
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction, sentence_bleu
 from utils import extract_decoder_model, extract_encoder_model
+from rouge import Rouge
 
 
 class Seq2Seq_Inference(object):
@@ -19,6 +20,7 @@ class Seq2Seq_Inference(object):
         self.default_max_len_title = self.pp_title.padding_maxlen
         self.nn = None
         self.rec_df = None
+        self.rouge = Rouge()
 
     def generate_issue_title(self,
                              raw_input_text,
@@ -163,7 +165,11 @@ class Seq2Seq_Inference(object):
             The BLEU Score
 
         """
-        scores = list()
+        bleus = list()
+        rouge1_fs, rouge1_ps, rouge1_rs = list(), list(), list()
+        rouge2_fs, rouge2_ps, rouge2_rs = list(), list(), list()
+        rougel_fs, rougel_ps, rougel_rs = list(), list(), list()
+
         assert len(holdout_bodies) == len(holdout_titles)
         num_examples = len(holdout_bodies)
 
@@ -175,11 +181,39 @@ class Seq2Seq_Inference(object):
             print(current_actual)
             current_predicted = self.pp_title.process_text([yhat])[0]
             print(current_predicted)
-            score = sentence_bleu([current_actual], current_predicted, weights=(1, 0, 0, 0))
-            scores.append(score)
-            print(score)
+            bleu_score = sentence_bleu([current_actual], current_predicted, weights=(1, 0, 0, 0))
+            bleus.append(bleu_score)
+            print(bleu_score)
+            rouge_scores = self.rouge.get_scores(current_predicted, current_actual)
+            rouge1_fs.append(rouge_scores[0]['rouge-1']['f'])
+            rouge1_ps.append(rouge_scores[0]['rouge-1']['p'])
+            rouge1_rs.append(rouge_scores[0]['rouge-1']['r'])
+            rouge2_fs.append(rouge_scores[0]['rouge-2']['f'])
+            rouge2_ps.append(rouge_scores[0]['rouge-2']['p'])
+            rouge2_rs.append(rouge_scores[0]['rouge-2']['r'])
+            rougel_fs.append(rouge_scores[0]['rouge-l']['f'])
+            rougel_ps.append(rouge_scores[0]['rouge-l']['p'])
+            rougel_rs.append(rouge_scores[0]['rouge-l']['r'])
         # calculate BLEU score
         logging.warning('Calculating BLEU.')
-        scores_array = np.array(scores, dtype=float)
-        bleu = np.average(scores_array)
-        return bleu
+        bleus_array = np.array(bleus, dtype=float)
+        rouge1_f_array = np.array(rouge1_fs, dtype=float)
+        rouge1_p_array = np.array(rouge1_ps, dtype=float)
+        rouge1_r_array = np.array(rouge1_rs, dtype=float)
+        rouge2_f_array = np.array(rouge2_fs, dtype=float)
+        rouge2_p_array = np.array(rouge2_ps, dtype=float)
+        rouge2_r_array = np.array(rouge2_rs, dtype=float)
+        rougel_f_array = np.array(rougel_fs, dtype=float)
+        rougel_p_array = np.array(rougel_ps, dtype=float)
+        rougel_r_array = np.array(rougel_rs, dtype=float)
+        bleu = np.average(bleus_array)
+        rouge1_f = np.average(rouge1_f_array)
+        rouge1_p = np.average(rouge1_p_array)
+        rouge1_r = np.average(rouge1_r_array)
+        rouge2_f = np.average(rouge2_f_array)
+        rouge2_p = np.average(rouge2_p_array)
+        rouge2_r = np.average(rouge2_r_array)
+        rougel_f = np.average(rougel_f_array)
+        rougel_p = np.average(rougel_p_array)
+        rougel_r = np.average(rougel_r_array)
+        return bleu, rouge1_f, rouge1_p, rouge1_r, rouge2_f, rouge2_p, rouge2_r, rougel_f, rougel_p, rougel_r

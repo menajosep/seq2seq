@@ -106,3 +106,4 @@ webencodings==0.5.1
 Werkzeug==0.14.1
 widgetsnbextension==3.0.8
 wrapt==1.10.11
+rouge==0.3.1

@@ -33,7 +33,7 @@ recipes
 export CUDA_VISIBLE_DEVICES=1
 nohup python trainer_pretrained_embeddings.py --emb_type fasttext --n_epochs 100 --datasource recipes --emb_file /home/jmena/dev/data/fasttext/wiki.en.vec > logs/log_recipes_fasttext.log &
 export CUDA_VISIBLE_DEVICES=2
-nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 100 --datasource recipes --emb_file /home/jmena/dev/data/glove/glove/glove.6B.300d.txt  > logs/log_recipes_glove.log &
+nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 100 --datasource recipes --emb_file /home/jmena/dev/data/glove/glove.6B.300d.txt  > logs/log_recipes_glove.log &
 export CUDA_VISIBLE_DEVICES=3
 nohup python trainer_pretrained_embeddings.py --emb_type word2vec --n_epochs 100 --datasource recipes --emb_file /home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.txt  > logs/log_recipes_word2vec.log &
 ```
@@ -42,7 +42,7 @@ Economics
 export CUDA_VISIBLE_DEVICES=1
 nohup python trainer_pretrained_embeddings.py --emb_type fasttext --n_epochs 1100 --datasource economics --emb_file /home/jmena/dev/data/fasttext/wiki.en.vec > logs/log_economics_fasttext.log &
 export CUDA_VISIBLE_DEVICES=2
-nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 1100 --datasource economics --emb_file /home/jmena/dev/data/glove/glove/glove.6B.300d.txt  > logs/log_economics_glove.log &
+nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 1100 --datasource economics --emb_file /home/jmena/dev/data/glove/glove.6B.300d.txt  > logs/log_economics_glove.log &
 export CUDA_VISIBLE_DEVICES=3
 nohup python trainer_pretrained_embeddings.py --emb_type word2vec --n_epochs 1100 --datasource economics --emb_file /home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.txt  > logs/log_economics_word2vec.log &
 ```
@@ -51,7 +51,7 @@ KP20k
 export CUDA_VISIBLE_DEVICES=1
 nohup python trainer_pretrained_embeddings.py --emb_type fasttext --n_epochs 100 --learning_rate 0.01 --datasource kp20k --emb_file /home/jmena/dev/data/fasttext/wiki.en.vec > logs/log_kp20k_fasttext.log &
 export CUDA_VISIBLE_DEVICES=2
-nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 100 --learning_rate 0.01 --datasource kp20k --emb_file /home/jmena/dev/data/glove/glove/glove.6B.300d.txt  > logs/log_kp20k_glove.log &
+nohup python trainer_pretrained_embeddings.py --emb_type glove --n_epochs 100 --learning_rate 0.01 --datasource kp20k --emb_file /home/jmena/dev/data/glove/glove.6B.300d.txt  > logs/log_kp20k_glove.log &
 export CUDA_VISIBLE_DEVICES=3
 nohup python trainer_pretrained_embeddings.py --emb_type word2vec --n_epochs 100 --learning_rate 0.01 --datasource kp20k --emb_file /home/jmena/dev/data/word2vec/GoogleNews-vectors-negative300.txt  > logs/log_kp20k_word2vec.log &
 ```
@@ -65,5 +65,5 @@ nohup python validation_economics.py  > logs/validation_economics.log &
 nohup python validation_recipes.py  > logs/validation_recipes.log &
 ```
 ```
-nohup python validation_kp20k_12e.py  > logs/validation_kp20k_12e.log &
+nohup python validation_kp20k.py  > logs/validation_kp20k.log &
 ```
